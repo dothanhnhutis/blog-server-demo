@@ -6,7 +6,8 @@ dotenv.config({});
 const envSchema = z.object({
   NODE_ENV: z.string(),
   SESSION_KEY_NAME: z.string(),
-  SESSION_SECRET: z.string(),
+  SESSION_SECRET_KEY: z.string(),
+  SESSION_MAX_AGE: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.string(),
@@ -28,7 +29,8 @@ const envSchema = z.object({
 const configParser = envSchema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
   SESSION_KEY_NAME: process.env.SESSION_KEY_NAME,
-  SESSION_SECRET: process.env.SESSION_SECRET,
+  SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
+  SESSION_MAX_AGE: process.env.SESSION_MAX_AGE,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,

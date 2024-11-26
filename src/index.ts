@@ -3,6 +3,10 @@ import app from "./app";
 import SocketServer from "./socket/init";
 import { Server } from "socket.io";
 import { taskListener } from "./socket/task";
+import { initRedis } from "./redis/connection";
+import { Amqp } from "./rabbitmq/connect";
+import env from "./configs/env";
+import { sendEmailListener } from "./rabbitmq/mail";
 
 const SERVER_PORT = 4000;
 
@@ -20,9 +24,23 @@ const startHttpServer = async (httpServer: http.Server) => {
 const startServer = async () => {
   try {
     const httpServer: http.Server = new http.Server(app);
-
-    const socketIO: Server = SocketServer.getInstance(httpServer);
+    // socket
+    const socketIO: Server = new SocketServer(httpServer);
     taskListener(socketIO);
+
+    // redis cache
+    initRedis();
+
+    // rabbitMQ
+    const amqp = new Amqp(env.RABBITMQ_URL);
+    await amqp.connect();
+    await sendEmailListener();
+
+    for (const s of ["SIGINT", "SIGTERM"]) {
+      process.once(s, async () => {
+        await Amqp.conn.close();
+      });
+    }
 
     await startHttpServer(httpServer);
   } catch (error) {

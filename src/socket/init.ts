@@ -12,16 +12,17 @@ const opt: Partial<ServerOptions> = {
 class SocketServer extends Server {
   private static io: SocketServer;
 
-  constructor(httpServer: http.Server) {
-    super(httpServer, opt);
+  constructor(httpServer: http.Server, options?: Partial<ServerOptions>) {
+    super(httpServer, { ...opt, ...options });
+    SocketServer.io = this;
   }
 
-  public static getInstance(httpServer?: http.Server): SocketServer {
+  public static getInstance(): SocketServer {
     if (!SocketServer.io) {
-      if (!httpServer) throw Error("httpServer to create SocketServer");
-      SocketServer.io = new SocketServer(httpServer);
+      throw Error("httpServer to create SocketServer");
     }
     return SocketServer.io;
   }
 }
+
 export default SocketServer;

@@ -9,14 +9,14 @@ import express, {
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-// import compression from "compression";
+import compression from "compression";
 
 import env from "@/configs/env";
 import { CustomError, NotFoundError } from "@/error-handler";
 import { StatusCodes } from "http-status-codes";
 import { appRoutes } from "./routes";
-// import deserializeCookie from "./middleware/deserializeCookie";
-// import deserializeUser from "./middleware/deserializeUser";
+import deserializeCookie from "./middlewares/deserializeCookie";
+import deserializeUser from "./middlewares/deserializeUser";
 
 const app: Express = express();
 
@@ -31,11 +31,11 @@ app.use(
   })
 );
 
-// app.use(compression());
+app.use(compression());
 app.use(express.json({ limit: "200mb" }));
 app.use(express.urlencoded({ extended: true, limit: "200mb" }));
-// app.use(deserializeCookie);
-// app.use(deserializeUser);
+app.use(deserializeCookie);
+app.use(deserializeUser);
 
 appRoutes(app);
 
